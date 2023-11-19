@@ -21,4 +21,4 @@ def generate_path(pairs_list=dict, initial_pair=list):
 
     print(conexions_path)
 
-generate_path(house_pairs, ['R','B','D','C'])
+generate_path(house_pairs, ['R','B','D','C']) # Passa a lista completa dos caminhos que já foram visitados
