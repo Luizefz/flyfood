@@ -1,10 +1,8 @@
 from read_matrix import *
 from itertools import permutations
 
-house_pairs = read_matrix('matrix_test.txt') # Devolve um dicionario com as casas(chave) e suas coordenadas(valor)
-
 def generate_paths_possibles(pairs_list=dict):
-    permute_list=[]
+    permute_list=[]                          # Gera uma lista com todas as permutacoes possiveis
     key_list = pairs_list.keys()
 
     for i in key_list:
@@ -16,8 +14,8 @@ def generate_paths_possibles(pairs_list=dict):
     return permutation
 
 
-def generate_pair_distances(pairs_list=dict):   # Gera um dicionario com todas as distancias entre os pares de casas
-    conexions_distances = {}
+def generate_pair_distances(pairs_list=dict):
+    conexions_distances = {}           # Gera um dicionario com todas as distancias entre os pares de casas
     key_list = pairs_list.keys()       # Pegando a lista de Chaves do dicionário
     
     for i in key_list:                 # Fixa um elemento da lista de chaves e permuta com todos os outros
@@ -31,11 +29,22 @@ def generate_pair_distances(pairs_list=dict):   # Gera um dicionario com todas a
     return conexions_distances
 
 
-pair_values = generate_pair_distances(house_pairs)
-paths = generate_paths_possibles(house_pairs)
+def calculate_paths_distance(paths=list, pair_values=dict):
+    distace = 0                                             # Calcula a distancia de cada caminho
+    paths_distances = {}
+    for i in paths:
+        for k in range(0, len(i)-1): 
+            search = i[k] + i[k+1]                          # Concatena em pares de casas para procurar no dicionario
+            distace += pair_values[search]                  # Pesquisa no dicionario a distancia correspondente ao par e soma tudo
+        paths_distances[i] = distace                        # Adiciona no dicionario de caminhos a chave(caminho) e a soma dos valores(distancia)
+        distace = 0
+    return paths_distances
 
-for i in paths:
-    for k in range(0, len(i)-1): 
-        search = i[k] + i[k+1]                          # Concatena os pares de casas para procurar no dicionario
-        print(search, '-',pair_values[search], end=' ') # Imprime o par de casas e a distancia entre elas
-    print('\n')
+matrix_pairs = read_matrix('matrix_test.txt') # Devolve um dicionario com as casas(chave) e suas coordenadas(valor)
+
+paths = generate_paths_possibles(matrix_pairs)
+pair_values = generate_pair_distances(matrix_pairs)
+paths_distances = calculate_paths_distance(paths, pair_values)
+
+minimal_distance = min(paths_distances, key=paths_distances.get) # Pega a chave com valor de menor distancia
+print(f'{minimal_distance} - {paths_distances[minimal_distance]}')
