@@ -1,24 +1,41 @@
 from read_matrix import *
+from itertools import permutations
 
-house_pairs = read_matrix('matrix_test.txt')
-house_distances = []
+house_pairs = read_matrix('matrix_test.txt') # Devolve um dicionario com as casas(chave) e suas coordenadas(valor)
 
- # Comeca de R e vai permutar em todas as casa possiveis (-R).
-# Joga tudo na lista, ordena a lista e pega a menor.
-# Proximo caminho n+1 permutando a lista (- R) & (- n+1) [...] 
+def generate_paths_possibles(pairs_list=dict):
+    permute_list=[]
+    key_list = pairs_list.keys()
 
-def generate_path(pairs_list=dict, initial_pair=list):
-    conexions_path = []
-    final_element = initial_pair[-1]
+    for i in key_list:
+        if i != 'R':                         # Adiciona na lista todas as chave que nao sao 'R'
+            permute_list.append(i)
+
+    permutation = ['R' + ''.join(i) + 'R' for i in permutations(permute_list)] # Gera todas as permutacoes possiveis e adiciona 'R' no inicio e no fim
+
+    return permutation
+
+
+def generate_pair_distances(pairs_list=dict):   # Gera um dicionario com todas as distancias entre os pares de casas
+    conexions_distances = {}
     key_list = pairs_list.keys()       # Pegando a lista de Chaves do dicionário
     
-    for i in key_list:                 # Percorrendo a lista de chaves
-        if i == final_element:         # Caso a chave seja igual ao paramentro da chave anterior, pula
-            continue                   # Faz a subtracao do Y/X do ultimo elemento com o Y/X do elemento index   
-        calc = f'{final_element} - {i}: ({pairs_list[final_element][0] - pairs_list[i][0]}, {pairs_list[final_element][1] - pairs_list[i][1]})'
-        
-        conexions_path.append(calc)    # Adiciona o passo para cada elemento na lista
+    for i in key_list:                 # Fixa um elemento da lista de chaves e permuta com todos os outros
+        for j in key_list:
+            if i == j:                 # Ignora a reflexividade da permutacao
+                continue
+            walk_x = abs(pairs_list[i][0] - pairs_list[j][0])
+            walk_y = abs(pairs_list[i][1] - pairs_list[j][1])
+            conexions_distances[i+j] = walk_x + walk_y
 
-    print(conexions_path)
+    return conexions_distances
 
-generate_path(house_pairs, ['R','B','D','C']) # Passa a lista completa dos caminhos que já foram visitados
+
+pair_values = generate_pair_distances(house_pairs)
+paths = generate_paths_possibles(house_pairs)
+
+for i in paths:
+    for k in range(0, len(i)-1): 
+        search = i[k] + i[k+1]                          # Concatena os pares de casas para procurar no dicionario
+        print(search, '-',pair_values[search], end=' ') # Imprime o par de casas e a distancia entre elas
+    print('\n')
