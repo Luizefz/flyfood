@@ -1,7 +1,7 @@
 import os
 
 def read_matrix(file_name):
-    file_path = os.path.dirname(os.path.realpath('__file__')) + '\\' + file_name # Cria um file path para pegar a matriz
+    file_path = os.path.dirname(os.path.realpath('__file__')) + '/' + file_name # Cria um file path para pegar a matriz
     matrix_data = []
 
     with open(file_path, 'r') as f:
